@@ -80,12 +80,12 @@ void loop() {
 //READING POTENTIOMETER INPUTS
   PORTB=0b00000000; //Data flow - X0 (first step on both rows)
   int step1A = analogRead(potsA); //read data from X0 potsA 1st step
-  int step1APitch = map(step1A, 0, 1023, 50, 80) //Convert to MIDI values
+  int step1APitch = map(step1A, 0, 1023, 50, 80); //Convert to MIDI values
   int step1B = analogRead(potsB); //read data from X0 potsB 1st step
 
   PORTB=0b00000001;  //Data flow - X1 (second step)
   int step2A = analogRead(potsA); //read data from X1 potsA 2nd step
-  int step2APitch = map(step2A, 0, 1023, 50, 80) //Convert to MIDI values
+  int step2APitch = map(step2A, 0, 1023, 50, 80); //Convert to MIDI values
   int step2B = analogRead(potsB); //read data from X1 potsB 2nd step
 
 //SETTING TEMPO
@@ -103,9 +103,23 @@ void loop() {
 
     if (ledAState == LOW){
       digitalWrite(ledAPins, HIGH); //1st step, 1st row of LEDs, turns on
+      analogWrite(eightStepCV, step1APitch); //Sends correct control voltage (1v per octave) to CV Out Jack
+      //Step 1A Pitch is currently set in MIDI, will have to change this
     }
     else (ledAState == HIGH){
-      digitalWrite(ledAPins, LOW) //1st step, 1st row of LEDs, turns off
+      digitalWrite(ledAPins, LOW); //1st step, 1st row of LEDs, turns off
+      analogWrite(eightStepCV, LOW); //Removes any control voltage
+    }
+
+    PORTB=0b00000001; //Data flow - X1 (2nd step)
+
+    if (ledAState == LOW){
+      digitalWrite(ledAPins, HIGH); //2st step, 1st row of LEDs, turns on
+      analogWrite(eightStepCV, step2APitch); //Sends CV of second steps pitch to CV out jack
+    }
+    else (ledAState == HIGH){
+      digitalWrite(ledAPins, LOW); //2st step, 1st row of LEDs, turns off
+      analogWrite(eightStepCV, LOW);
     }
 
     rememberTime = millis(); //makes 'rememberTime' the current time 
