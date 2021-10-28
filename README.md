@@ -2,7 +2,6 @@ INITIAL NOTES
 
 
 After Eight Step 2.0
-
 Charis Cat // Child of an Android 2021
 
 --
