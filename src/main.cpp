@@ -29,10 +29,17 @@ allowing room for the CV gates.
 //LEDs (multiplexed)
   const int ledAPins = A2;
   const int ledBPins = A3;
+  int ledAState = LOW;
 
 //CONTROL VOLTAGE
   const int eightStepCV = A4;
   const int afterEightCV = A5;
+
+//TEMPO POTENTIOMETER
+  const int tempoControl = A6;
+  int tempoReadout = 0;
+  int tempo = 0;
+  long rememberTime = 0;
 
 //REMOVED COMPONENTS (for my ref)
 
@@ -54,11 +61,12 @@ void setup() {
   digitalWrite(inhibitMux,LOW);
   DDRB = 0b00000111;  //PORT 8,9,10 as output
   PORTB = 0b00000000; //PORT 8,9,10 set to low
-  pinMode(potsA,INPUT);
-  pinMode(potsB,INPUT);
+  pinMode(potsA,INPUT); //PITCH
+  pinMode(potsB,INPUT); //PROBABILITY
 
 //LEDs
   pinMode(ledAPins, OUTPUT);
+  digitalWrite (ledAPins, ledAState);
   pinMode(ledBPins, OUTPUT);
 
 //CONTROL VOLTAGE
@@ -67,18 +75,49 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+// put your main code here, to run repeatedly:
 
 //READING POTENTIOMETER INPUTS
+  PORTB=0b00000000; //Data flow - X0 (first step on both rows)
+  int step1A = analogRead(potsA); //read data from X0 potsA 1st step
+  int step1APitch = map(step1A, 0, 1023, 50, 80) //Convert to MIDI values
+  int step1B = analogRead(potsB); //read data from X0 potsB 1st step
 
-//8 STEP OUTPUT (LEDs)
+  PORTB=0b00000001;  //Data flow - X1 (second step)
+  int step2A = analogRead(potsA); //read data from X1 potsA 2nd step
+  int step2APitch = map(step2A, 0, 1023, 50, 80) //Convert to MIDI values
+  int step2B = analogRead(potsB); //read data from X1 potsB 2nd step
 
-//8 STEP OUTPUT (CV)
+//SETTING TEMPO
+  //Want to use input of tempo potentiometer to scale how long it takes to 
+  //jump between steps
+
+  int tempoReadout = analogRead(tempoControl); //reads potentiometer
+  int tempo = map(tempoReadout, 0, 1023, 20, 260); //makes value of potentiometer smaller
+  int tempoInMilliseconds = (60000/tempo); //Converts BPM to milliseconds
+
+//8 STEP OUTPUT (LEDs & CV)
+  if ((millis() - rememberTime) >= tempoInMilliseconds){
+
+    PORTB=0b00000000; //Data flow - X0 (1st step)
+
+    if (ledAState == LOW){
+      digitalWrite(ledAPins, HIGH); //1st step, 1st row of LEDs, turns on
+    }
+    else (ledAState == HIGH){
+      digitalWrite(ledAPins, LOW) //1st step, 1st row of LEDs, turns off
+    }
+
+    rememberTime = millis(); //makes 'rememberTime' the current time 
+  }
 
 //MARKOV CHAIN PROCESSING
 
+
 //AFTER 8 STEP OUTPUT (LEDs)
 
+
 //AFTER 8 STEP OUTPUT (CV)
+
 
 }
