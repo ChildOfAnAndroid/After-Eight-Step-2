@@ -97,7 +97,7 @@ void loop() {
   int tempoInMilliseconds = (60000/tempo); //Converts BPM to milliseconds
 
 //8 STEP OUTPUT (LEDs & CV)
-  if ((millis() - rememberTime) >= tempoInMilliseconds){
+  if ((millis() - rememberTime) >= tempoInMilliseconds);{
 
     PORTB=0b00000000; //Data flow - X0 (1st step)
 
@@ -106,7 +106,7 @@ void loop() {
       analogWrite(eightStepCV, step1APitch); //Sends correct control voltage (1v per octave) to CV Out Jack
       //Step 1A Pitch is currently set in MIDI, will have to change this
     }
-    else (ledAState == HIGH){
+    else (ledAState == HIGH);{
       digitalWrite(ledAPins, LOW); //1st step, 1st row of LEDs, turns off
       analogWrite(eightStepCV, LOW); //Removes any control voltage
     }
@@ -117,7 +117,7 @@ void loop() {
       digitalWrite(ledAPins, HIGH); //2st step, 1st row of LEDs, turns on
       analogWrite(eightStepCV, step2APitch); //Sends CV of second steps pitch to CV out jack
     }
-    else (ledAState == HIGH){
+    else (ledAState == HIGH);{
       digitalWrite(ledAPins, LOW); //2st step, 1st row of LEDs, turns off
       analogWrite(eightStepCV, LOW);
     }
